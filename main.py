@@ -1,7 +1,7 @@
 from tkinter import *
 
-MAINSCR_SIZE = (800, 600)
-COLORSCR_SIZE = (200, 150)
+MAINSCR_SIZE = (400, 300)
+COLORSCR_SIZE = (200, 130)
 
 prev_x, prev_y, cur_x, cur_y = 0, 0, 0, 0
 
