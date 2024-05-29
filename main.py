@@ -1,98 +1,47 @@
 from tkinter import *
+from classes import *
 
-ROOT_SIZE = (600, 500)
-COLORWNDW_SIZE = (200, 150)
-CANVAS_SIZE = (575, 400)
+ROOT_SIZE = (600, 400)
+COLORS_SIZE = (200, 130)
+CANVAS_SIZE = (575, 300)
 
-prev_x, prev_y, cur_x, cur_y = 0, 0, 0, 0
-
-canvas_pressed = False
+current_color: StringVar
 colors_window_opened = False
 
-canvas_obj: Canvas
+def get_color() -> StringVar:
+    return current_color
 
-def on_canvas_motion(event: Event) -> None:
-    global prev_x, prev_y
-    global cur_x, cur_y
-    global paint_color
-    global canvas_obj
+def set_color(color: str) -> None:
+    current_color.set(color)
 
-    if canvas_pressed:
-        canvas_obj.create_line(prev_x, prev_y, cur_x, cur_y, fill=paint_color.get())
-    prev_x, prev_y = cur_x, cur_y
-    cur_x, cur_y = event.x, event.y
-
-def erase_canvas() -> None:
-    global canvas_obj
-    canvas_obj.delete("all")
-
-def on_canvas_press(event: Event) -> None:
-    global canvas_pressed
-    canvas_pressed = True
-    print("pres")
-
-def on_canvas_release(event: Event) -> None:
-    global canvas_pressed
-    canvas_pressed = False
-    print("rel")
-
-def on_colors_window_close(window_obj: Toplevel) -> None:
+def colors_window_closed() -> None:
     global colors_window_opened
     colors_window_opened = False
-    window_obj.destroy()
 
-def create_color_window() -> None:
-    global paint_color
-    global canvas_obj
+def open_colors_window() -> None:
     global colors_window_opened
 
-    if colors_window_opened:
+    if (colors_window_opened):
         return
     
+    window = ColorsWindow(COLORS_SIZE[0], COLORS_SIZE[1], "Colors", current_color, colors_window_closed, set_color)
     colors_window_opened = True
 
-    color_window = Toplevel()
-    color_window.geometry(f"{COLORWNDW_SIZE[0]}x{COLORWNDW_SIZE[1]}")
-    color_window.title("Colors")
-    color_window.resizable(False, False)
-
-    red_radio = Radiobutton(color_window, fg="red", text="Red", variable=paint_color, value="red")
-    green_radio = Radiobutton(color_window, fg="green", text="Green", variable=paint_color, value="green")
-    blue_radio = Radiobutton(color_window, fg="blue", text="Blue", variable=paint_color, value="blue")
-    black_radio = Radiobutton(color_window, fg="black", text="Black", variable=paint_color, value="black")
-    white_radio = Radiobutton(color_window, fg="gray", text="White", variable=paint_color, value="white")
-
-    red_radio.pack()
-    green_radio.pack()
-    blue_radio.pack()
-    black_radio.pack()
-    white_radio.pack()
-
-    color_window.protocol("WM_DELETE_WINDOW", lambda: on_colors_window_close(color_window))
-
 def main() -> None:
-    global paint_color
-    global canvas_obj
+    global ROOT_SIZE, COLORS_SIZE, CANVAS_SIZE
+    global current_color
 
-    root = Tk()
-    paint_color = StringVar()
-    paint_color.set("black")
+    root = Root(ROOT_SIZE[0], ROOT_SIZE[1], "Paint", "gray")
 
-    root.geometry(f"{ROOT_SIZE[0]}x{ROOT_SIZE[1]}")
-    root.title("Paint")
-    root.resizable(False, False)
-    root.configure(background="gray")
+    current_color = StringVar()
+    current_color.set("black")
 
-    canvas_obj = Canvas(bg="white", width=CANVAS_SIZE[0], height=CANVAS_SIZE[1])
-    canvas_obj.pack(pady=10)
-    canvas_obj.bind("<Motion>", on_canvas_motion)
-    canvas_obj.bind("<ButtonPress>", on_canvas_press)
-    canvas_obj.bind("<ButtonRelease>", on_canvas_release)
+    canvas = PaintCanvas(CANVAS_SIZE[0], CANVAS_SIZE[1], get_color)
 
-    erase_btn = Button(text="Erase All", command=erase_canvas)
-    erase_btn.pack(side="right", pady=20, padx=100)
-    erase_btn = Button(text="Colors", command=create_color_window)
-    erase_btn.pack(side="left", pady=20, padx=100)
+    colors_btn = Button(text="Colors", command=open_colors_window)
+    colors_btn.pack(after=canvas.obj, side="left", padx=100, pady=20)
+    erase_btn = Button(text="Erase All", command=canvas.erase)
+    erase_btn.pack(after=canvas.obj, side="right", padx=100, pady=20)
 
     root.mainloop()
 
