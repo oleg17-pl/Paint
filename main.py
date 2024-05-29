@@ -1,11 +1,13 @@
 from tkinter import *
 
-MAINSCR_SIZE = (400, 300)
-COLORSCR_SIZE = (200, 130)
+MAINSCR_SIZE = (600, 500)
+COLORSCR_SIZE = (200, 150)
+CANVAS_MODIFIER = (1.05, 1.2)
 
 prev_x, prev_y, cur_x, cur_y = 0, 0, 0, 0
 
 canvas_pressed = False
+colors_window_opened = False
 
 canvas_obj: Canvas
 
@@ -34,47 +36,67 @@ def on_canvas_release(event: Event) -> None:
     canvas_pressed = False
     print("rel")
 
+def on_colors_window_close(window_obj: Toplevel) -> None:
+    global colors_window_opened
+    colors_window_opened = False
+    window_obj.destroy()
+
 def create_color_window() -> None:
     global paint_color
     global canvas_obj
+    global colors_window_opened
 
-    paint_color = StringVar()
-    paint_color.set("black")
+    if colors_window_opened:
+        return
+    
+    colors_window_opened = True
 
     color_window = Toplevel()
     color_window.geometry(f"{COLORSCR_SIZE[0]}x{COLORSCR_SIZE[1]}")
-    color_window.title("Control")
+    color_window.title("Colors")
     color_window.resizable(False, False)
 
     red_radio = Radiobutton(color_window, fg="red", text="Red", variable=paint_color, value="red")
     green_radio = Radiobutton(color_window, fg="green", text="Green", variable=paint_color, value="green")
     blue_radio = Radiobutton(color_window, fg="blue", text="Blue", variable=paint_color, value="blue")
     black_radio = Radiobutton(color_window, fg="black", text="Black", variable=paint_color, value="black")
-
-    erase_btn = Button(color_window, text="Erase", command=erase_canvas)
+    white_radio = Radiobutton(color_window, fg="gray", text="White", variable=paint_color, value="white")
 
     red_radio.pack()
     green_radio.pack()
     blue_radio.pack()
     black_radio.pack()
-    erase_btn.pack()
+    white_radio.pack()
+
+    color_window.protocol("WM_DELETE_WINDOW", lambda: on_colors_window_close(color_window))
 
 def main() -> None:
     global paint_color
     global canvas_obj
+
     root = Tk()
+    paint_color = StringVar()
+    paint_color.set("black")
 
     root.geometry(f"{MAINSCR_SIZE[0]}x{MAINSCR_SIZE[1]}")
     root.title("Paint")
     root.resizable(False, False)
+    root.configure(background="gray")
 
-    canvas_obj = Canvas(bg="white", width=MAINSCR_SIZE[0], height=MAINSCR_SIZE[1])
-    canvas_obj.pack()
+    canvas_width = MAINSCR_SIZE[0] / CANVAS_MODIFIER[0]
+    canvas_height = height=MAINSCR_SIZE[1] / CANVAS_MODIFIER[1]
+
+    canvas_obj = Canvas(bg="white", width=canvas_width, height=canvas_height)
+    canvas_obj.pack(pady=10)
     canvas_obj.bind("<Motion>", lambda event: on_canvas_motion(event))
     canvas_obj.bind("<ButtonPress>", on_canvas_press)
     canvas_obj.bind("<ButtonRelease>", on_canvas_release)
 
-    create_color_window()
+    erase_btn = Button(text="Erase All", command=erase_canvas)
+    erase_btn.pack(side="right", pady=20, padx=100)
+    erase_btn = Button(text="Colors", command=create_color_window)
+    erase_btn.pack(side="left", pady=20, padx=100)
+
     root.mainloop()
 
 if __name__ == "__main__":
