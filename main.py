@@ -2,7 +2,7 @@ from tkinter import *
 
 ROOT_SIZE = (600, 500)
 COLORWNDW_SIZE = (200, 150)
-CANVAS_MODIFIER = (1.05, 1.2)
+CANVAS_SIZE = (575, 400)
 
 prev_x, prev_y, cur_x, cur_y = 0, 0, 0, 0
 
@@ -83,12 +83,9 @@ def main() -> None:
     root.resizable(False, False)
     root.configure(background="gray")
 
-    canvas_width = ROOT_SIZE[0] / CANVAS_MODIFIER[0]
-    canvas_height = ROOT_SIZE[1] / CANVAS_MODIFIER[1]
-
-    canvas_obj = Canvas(bg="white", width=canvas_width, height=canvas_height)
+    canvas_obj = Canvas(bg="white", width=CANVAS_SIZE[0], height=CANVAS_SIZE[1])
     canvas_obj.pack(pady=10)
-    canvas_obj.bind("<Motion>", lambda event: on_canvas_motion(event))
+    canvas_obj.bind("<Motion>", on_canvas_motion)
     canvas_obj.bind("<ButtonPress>", on_canvas_press)
     canvas_obj.bind("<ButtonRelease>", on_canvas_release)
 
