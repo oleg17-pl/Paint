@@ -1,7 +1,7 @@
 from tkinter import *
 
-MAINSCR_SIZE = (600, 500)
-COLORSCR_SIZE = (200, 150)
+ROOT_SIZE = (600, 500)
+COLORWNDW_SIZE = (200, 150)
 CANVAS_MODIFIER = (1.05, 1.2)
 
 prev_x, prev_y, cur_x, cur_y = 0, 0, 0, 0
@@ -52,7 +52,7 @@ def create_color_window() -> None:
     colors_window_opened = True
 
     color_window = Toplevel()
-    color_window.geometry(f"{COLORSCR_SIZE[0]}x{COLORSCR_SIZE[1]}")
+    color_window.geometry(f"{COLORWNDW_SIZE[0]}x{COLORWNDW_SIZE[1]}")
     color_window.title("Colors")
     color_window.resizable(False, False)
 
@@ -78,13 +78,13 @@ def main() -> None:
     paint_color = StringVar()
     paint_color.set("black")
 
-    root.geometry(f"{MAINSCR_SIZE[0]}x{MAINSCR_SIZE[1]}")
+    root.geometry(f"{ROOT_SIZE[0]}x{ROOT_SIZE[1]}")
     root.title("Paint")
     root.resizable(False, False)
     root.configure(background="gray")
 
-    canvas_width = MAINSCR_SIZE[0] / CANVAS_MODIFIER[0]
-    canvas_height = height=MAINSCR_SIZE[1] / CANVAS_MODIFIER[1]
+    canvas_width = ROOT_SIZE[0] / CANVAS_MODIFIER[0]
+    canvas_height = ROOT_SIZE[1] / CANVAS_MODIFIER[1]
 
     canvas_obj = Canvas(bg="white", width=canvas_width, height=canvas_height)
     canvas_obj.pack(pady=10)
